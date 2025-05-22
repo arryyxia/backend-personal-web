@@ -21,6 +21,7 @@ Route::get('/user', function (Request $request) {
 
 Route::group(['prefix' => 'blog'], function () {
     Route::get('/', [BlogController::class, 'index']);
+    Route::get('/first', [BlogController::class, 'getFirstBlog']);
     Route::get('/{id}', [BlogController::class, 'show']);
 });
 

@@ -12,10 +12,34 @@ class BlogController extends Controller
     /**
      * Display a paginated list of blogs.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $blogs = Blog::with('category')->paginate(10); // Include category relationship
+        $perPage = 3; // Number of blogs per page
+        $page = $request->query('page', 1); // Get the current page from the query string
+
+        // Skip the first blog only on the first page
+        $query = Blog::with('category')->orderBy('created_at', 'asc');
+        if ($page == 1) {
+            $query->skip(1);
+        }
+
+        $blogs = $query->paginate($perPage);
+
         return response()->json($blogs, 200);
+    }
+
+    /**
+     * Display a list of blogs with pagination.
+     */    
+    public function getFirstBlog()
+    {
+        $firstBlog = Blog::with('category')->orderBy('created_at', 'asc')->first();
+
+        if (!$firstBlog) {
+            return response()->json(['message' => 'No blogs found'], 404);
+        }
+
+        return response()->json($firstBlog, 200);
     }
 
     /**
@@ -62,7 +86,7 @@ class BlogController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $blog = Blog::find($id);
+        $blog = Blog::with("category")->find($id);
 
         if (!$blog) {
             return response()->json(['message' => 'Blog not found'], 404);
