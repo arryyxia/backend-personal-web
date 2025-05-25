@@ -39,7 +39,7 @@ class BlogController extends Controller
             return response()->json(['message' => 'No blogs found'], 404);
         }
 
-        return response()->json($firstBlog, 200);
+        return response()->json($firstBlog, 200); 
     }
 
     /**
